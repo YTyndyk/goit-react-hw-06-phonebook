@@ -16,7 +16,6 @@ export const contactSlice = createSlice({
     setContactValue(state, action) {
       state.contacts.push(action.payload);
     },
-
     deletContactsValue(state, action) {
       state.contacts = action.payload;
     },

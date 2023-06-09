@@ -1,41 +1,34 @@
-import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setFilterValue, getFilterValue } from '../redux/filterSlice';
+import {
+  setContactValue,
+  deletContactsValue,
+  getContactsValue,
+} from '../redux/contactSlice';
 import ContactsList from './ContactsList';
 import Form from './ContactsForm';
 import Filter from './Filter';
 import css from './GlobalStyles.module.css';
-import innitialContacts from '../../src/contacts.json';
-import useLocalStorage from 'Hooks/useLocalStorage';
 
 const App = () => {
-  const [contacts, setContacts] = useLocalStorage('contacts', innitialContacts);
-  const [filter, setFilter] = useState('');
+  const dispatchFilter = useDispatch();
+  const contactsValue = useSelector(getContactsValue);
+  const filterValue = useSelector(getFilterValue);
 
-  const deleteContact = contactId => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== contactId)
-    );
+  const deleteContact = dataId => {
+    const newArray = contactsValue.filter(contact => contact.id !== dataId);
+    dispatchFilter(deletContactsValue(newArray));
   };
-  const addContact = newContact => {
-    const existedContact = contacts.some(
-      contact =>
-        contact.name === newContact.name || contact.number === newContact.number
-    );
-    if (existedContact) {
-      return alert(`${newContact.name}: is already in contacts`);
-    }
-    setContacts([newContact, ...contacts]);
-  };
-
-  const changeFilter = e => {
-    setFilter(e.currentTarget.value.toLowerCase());
-  };
-
-  const visibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
+  // const addContact = newContact => {
+  //   const existedContact = contacts.some(
+  //     contact =>
+  //       contact.name === newContact.name || contact.number === newContact.number
+  //   );
+  //   if (existedContact) {
+  //     return alert(`${newContact.name}: is already in contacts`);
+  //   }
+  //   setContacts([newContact, ...contacts]);
+  // };
 
   return (
     <div
@@ -48,13 +41,15 @@ const App = () => {
       }}
     >
       <h1 className={css.title}>Phonebook</h1>
-      <Form onSubmit={addContact} />
+      <Form onSubmit={data => dispatchFilter(setContactValue(data))} />
       <h2 className={css.title}>Contacts</h2>
-      <Filter value={filter} onChange={changeFilter} />
-      <ContactsList
-        contacts={visibleContacts()}
-        onDeleteContact={deleteContact}
+      <Filter
+        value={filterValue}
+        onChange={evt =>
+          dispatchFilter(setFilterValue(evt.currentTarget.value))
+        }
       />
+      <ContactsList contacts={contactsValue} onDeleteContact={deleteContact} />
     </div>
   );
 };

@@ -13,9 +13,9 @@ const Form = ({ onSubmit }) => {
     if (name === 'name') setName(value);
     else if (name === 'number') setNumber(value);
   };
-
   const handleSubmit = event => {
     event.preventDefault();
+
     onSubmit({ id: nanoid(), name, number });
     reset();
   };

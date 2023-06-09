@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import css from '../GlobalStyles.module.css';
 import PropTypes from 'prop-types';
 
 const ContactsList = ({ contacts, onDeleteContact }) => {
+  const filterValue = useSelector(state => state.valueFilter);
+  const visibleContacts = useMemo(() => {
+    const normalizeFilter = filterValue.toLowerCase();
+    return contacts.filter(({ name }) =>
+      name.toLowerCase().includes(normalizeFilter)
+    );
+  }, [contacts, filterValue]);
   return (
     <ul className={css.contactList}>
-      {contacts.map(({ id, name, number }) => (
+      {visibleContacts.map(({ id, name, number }) => (
         <li className={css.item} key={id}>
           <p>{name}: </p>
           <p>{number}</p>
