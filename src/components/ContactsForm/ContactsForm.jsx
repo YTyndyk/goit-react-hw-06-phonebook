@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getContactsValue } from '../../redux/contactSlice';
 import { nanoid } from 'nanoid';
 import css from '../GlobalStyles.module.css';
 import PropTypes from 'prop-types';
@@ -6,7 +8,19 @@ import PropTypes from 'prop-types';
 const Form = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getContactsValue);
 
+  const isDublicate = ({ name, number }) => {
+    const normalizedName = name.toLowerCase().trim();
+    const normalizedNumber = number.trim();
+
+    const dublicate = contacts.find(
+      contact =>
+        contact.name.toLowerCase().trim() === normalizedName ||
+        contact.number.trim() === normalizedNumber
+    );
+    return Boolean(dublicate);
+  };
   const handleChange = event => {
     const { name, value } = event.currentTarget;
 
@@ -15,7 +29,9 @@ const Form = ({ onSubmit }) => {
   };
   const handleSubmit = event => {
     event.preventDefault();
-
+    if (isDublicate({ name, number })) {
+      return alert(`This contact is already in contacts`);
+    }
     onSubmit({ id: nanoid(), name, number });
     reset();
   };
