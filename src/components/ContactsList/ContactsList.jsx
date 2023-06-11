@@ -5,14 +5,18 @@ import css from '../GlobalStyles.module.css';
 
 const ContactsList = () => {
   const filteredContacts = useSelector(getFilteredContacts);
-  console.log(filteredContacts);
 
   const dispatch = useDispatch();
 
+  // const onDeleteContact = contactId => {
+  //   dispatch(deletContactsValue(contactId));
+  // };
   const onDeleteContact = contactId => {
-    dispatch(deletContactsValue(contactId));
+    const newArray = filteredContacts.filter(
+      contact => contact.id !== contactId
+    );
+    dispatch(deletContactsValue(newArray));
   };
-
   return (
     <ul className={css.contactList}>
       {filteredContacts.map(({ id, name, number }) => (
