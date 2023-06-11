@@ -28,10 +28,7 @@ export const contactSlice = createSlice({
         };
       },
     },
-    // deletContactsValue(state, action) {
-    //   const index = state.findIndex(contact => contact.id === action.payload);
-    //   state.splice(index, 1);
-    // },
+
     deletContactsValue: (state, action) => {
       state.contacts = action.payload;
     },
