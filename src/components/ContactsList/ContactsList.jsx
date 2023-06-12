@@ -1,25 +1,32 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { deletContactsValue } from '../../redux/contactSlice';
-import { getFilteredContacts } from '../../redux/selectors';
+import { getContactsValue, getFilterValue } from '../../redux/selectors';
 import css from '../GlobalStyles.module.css';
 
 const ContactsList = () => {
-  const filteredContacts = useSelector(getFilteredContacts);
-
   const dispatch = useDispatch();
+  const contacts = useSelector(getContactsValue);
+  const filter = useSelector(getFilterValue);
 
-  // const onDeleteContact = contactId => {
-  //   dispatch(deletContactsValue(contactId));
-  // };
-  const onDeleteContact = contactId => {
-    const newArray = filteredContacts.filter(
-      contact => contact.id !== contactId
+  const filterContacts = () => {
+    const query = filter.toLocaleLowerCase();
+
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLocaleLowerCase().includes(query)
     );
-    dispatch(deletContactsValue(newArray));
+
+    if (query && !filteredContacts.length) {
+      alert('No contacts matching your request');
+    }
+    return filteredContacts;
   };
+  const onDeleteContact = contactId => {
+    dispatch(deletContactsValue(contactId));
+  };
+
   return (
     <ul className={css.contactList}>
-      {filteredContacts.map(({ id, name, number }) => (
+      {filterContacts().map(({ id, name, number }) => (
         <li className={css.item} key={id}>
           <p>{name}: </p>
           <p>{number}</p>
