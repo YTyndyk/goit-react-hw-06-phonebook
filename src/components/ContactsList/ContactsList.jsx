@@ -8,25 +8,18 @@ const ContactsList = () => {
   const contacts = useSelector(getContactsValue);
   const filter = useSelector(getFilterValue);
 
-  const filterContacts = () => {
-    const query = filter.toLocaleLowerCase();
-
-    const filteredContacts = contacts.filter(contact =>
-      contact.name.toLocaleLowerCase().includes(query)
-    );
-
-    if (query && !filteredContacts.length) {
-      alert('No contacts matching your request');
-    }
-    return filteredContacts;
-  };
+  const filteredContacts = contacts?.filter(contact =>
+    contact?.name?.toLowerCase().includes(filter.toLowerCase())
+  );
   const onDeleteContact = contactId => {
     dispatch(deletContactsValue(contactId));
   };
-
+  if (!filteredContacts?.length) {
+    alert('No contacts matching your request');
+  }
   return (
     <ul className={css.contactList}>
-      {filterContacts().map(({ id, name, number }) => (
+      {filteredContacts.map(({ id, name, number }) => (
         <li className={css.item} key={id}>
           <p>{name}: </p>
           <p>{number}</p>
